@@ -1,64 +1,43 @@
 import fastify from 'fastify'
-import crypto from 'node:crypto'
+
+import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform} from 'fastify-type-provider-zod'
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import {createCourseRoute} from "./src/routes/create-course.ts";
+import {getCourseByIdRoute} from "./src/routes/get-course-by-id.ts";
+import {getCoursesRoute} from "./src/routes/get-courses.ts";
+import scalarApiReference from '@scalar/fastify-api-reference'
 
 const server = fastify({ logger: {
     transport: {
         target: 'pino-pretty',
+        options: {
+            translateTime: 'HH:MM:ss Z',
+            ignore: 'pid,hostname',
+        }
     }
-}})
+}}).withTypeProvider<ZodTypeProvider>()
 
-const courses = [
-    {id: '1', title: 'Curso 1'},
-    {id: '2', title: 'Curso 2'},
-    {id: '3', title: 'Curso 3'}
-]
-
-
-server.get('/courses', () => {
-    return { courses}
-})
-
-server.get('/courses/:id', (request, reply) => {
-    type Params = {
-        id: string
-    }
-
-    const params = request.params as Params
-    const courseId = params.id
-
-    const course = courses.find(course => course.id === courseId)
-
-    if (!course) {
-        return reply.status(404).send({
-            message: 'Course not found'
-        })
-    }
-
-    return { course }
-})
-
-server.post('/courses', (request, reply) => {
-    type Body = {
-        title: string
-    }
-
-    const courseId = crypto.randomUUID()
-
-    const body = request.body as Body
-    const courseTitle = body.title
-
-    if (!courseTitle) {
-        return reply.status(400).send({
-            message: 'Course title is required'
-        })
-    }
-
-    courses.push({ id: courseId, title: courseTitle})
-
-    return reply.status(201).send({
-        courseId
+if (process.env.NODE_ENV === 'development') {
+    server.register(fastifySwagger, {
+        openapi: {
+            info: {
+                title: 'Desafio Node.js',
+                version: '1.0.0'
+            },
+        },
+        transform: jsonSchemaTransform
     })
-})
+}
+
+server.register(scalarApiReference, {routePrefix: '/docs'})
+
+server.setSerializerCompiler(serializerCompiler)
+server.setValidatorCompiler(validatorCompiler)
+
+server.register(createCourseRoute)
+server.register(getCourseByIdRoute)
+server.register(getCoursesRoute)
 
 server.listen({port: 3333}).then(() => {
     console.log('HTTP Server is running on port 3333')
