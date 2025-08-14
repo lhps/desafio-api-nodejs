@@ -15,6 +15,27 @@
       "when": 1755039792347,
       "tag": "0001_modern_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755125034258,
+      "tag": "0002_blushing_wolf_cub",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1755125133167,
+      "tag": "0003_chief_mimic",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1755126267929,
+      "tag": "0004_useful_stranger",
+      "breakpoints": true
     }
   ]
 }
