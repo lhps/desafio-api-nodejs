@@ -1,12 +1,13 @@
 import fastify from 'fastify'
 
 import { validatorCompiler, serializerCompiler, type ZodTypeProvider, jsonSchemaTransform} from 'fastify-type-provider-zod'
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUi from "@fastify/swagger-ui";
-import {createCourseRoute} from "./routes/create-course.ts";
-import {getCourseByIdRoute} from "./routes/get-course-by-id.ts";
-import {getCoursesRoute} from "./routes/get-courses.ts";
+import fastifySwagger from '@fastify/swagger'
+// import fastifySwaggerUi from '@fastify/swagger-ui'
+import { createCourseRoute } from './routes/create-course.ts'
+import { getCourseByIdRoute } from './routes/get-course-by-id.ts'
+import { getCoursesRoute } from './routes/get-courses.ts'
 import scalarApiReference from '@scalar/fastify-api-reference'
+import {loginRoute} from "./routes/login.ts";
 
 const server = fastify({ logger: {
         transport: {
@@ -38,5 +39,6 @@ server.setValidatorCompiler(validatorCompiler)
 server.register(createCourseRoute)
 server.register(getCourseByIdRoute)
 server.register(getCoursesRoute)
+server.register(loginRoute)
 
 export { server }
